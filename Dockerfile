@@ -12,9 +12,11 @@ COPY /config/flights.cfg /opt/nagios/etc/objects/
 COPY /config/nagios.cfg /opt/nagios/etc/
 
 ## SSH config
-COPY /config/config /opt/nagios/.ssh/
-COPY /config/config /opt/nagios/.ssh/config
+RUN apt-get update
+RUN apt-get install sshpass
 RUN su nagios
 RUN ssh-keygen -t rsa -b 4096 -f /opt/nagios/.ssh/id_rsa
-RUN ssh-copy-id -i /opt/nagios/.ssh/id_rsa.pub nagios@169.254.62.230
+#RUN echo "Host *" > /opt/nagios/.ssh/config && echo " StrictHostKeyChecking no" >> /opt/nagios/.ssh/config
+#RUN ssh-keyscan -H -t rsa 169.254.62.230  >> /opt/nagios/.ssh/known_hosts
+RUN sshpass -p nagios ssh-copy-id -o StrictHostKeyChecking=no -i /opt/nagios/.ssh/id_rsa.pub nagios@169.254.62.230
 
